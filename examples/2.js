@@ -36,7 +36,7 @@ eiscp.on('volume', function (arg) {
 eiscp.on('connect', function () {
 
     // Change the receiver volume to 22
-    eiscp.command("volume=22");
+    eiscp.command("MVL","22");
 	// Same thing below just written with different formats
     //eiscp.command("volume:22");
     //eiscp.command("volume 22");

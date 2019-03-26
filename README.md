@@ -1,8 +1,8 @@
 ## node-eiscp
 
-This is a node module to control and interact with Onkyo receivers over the network.
-
-Basically it is a merge of my previous module which was really simple and https://github.com/miracle2k/onkyo-eiscp translated to javascript, which means a lot more features but some stuff still missing like handling multiple receivers and special commands (ranges are supported though).
+This is a fork of git://github.com/tillbaks/node-eiscp.git, that removes the command mapping.  I found this caused the library to
+frequencty not work correctly with new receivers.  I'm sure there is value mapping IESCP to less crypt forms but for my use case
+that is not the siutation.
 
 ### How to use it?
 
@@ -11,44 +11,25 @@ Basically it is a merge of my previous module which was really simple and https:
 ```
 {
   "dependencies": {
-    "eiscp": "git://github.com/tillbaks/node-eiscp.git"
+    "eiscp": "git://github.com/jpetrocik/node-eiscp.git"
   }
 }
 ```
 
 #### See the examples
-https://github.com/tillbaks/node-eiscp/tree/master/examples
+https://github.com/jpetrocik/node-eiscp/tree/master/examples
 
 ### Command syntax
 
-Same syntax as https://github.com/miracle2k/onkyo-eiscp thanks dude!
+You send the IESCP command directly, see https://docs.google.com/spreadsheets/d/1BC932JWJYDB9IABvPjXZ6Zu4wEidP7AoRvnPoTpn-F8/edit?usp=sharing
 
-See example 3.js to retreive an array of all available commands
+Set Volume:
 
-A command consists of three parts: The zone, the command, and the arguments.
-Here are some examples::
+eiscp.command("MVL","22");
 
-    system-power=on
-    zone2.power=on
-    main.balance=3
+Power Off
 
-As you can see, the basic format is::
-
-    zone.command=argument
-
-If you do not specify a zone, then ``main`` is assumed.
-
-There are some variations on this syntax that are possible, for example the
-following are all equivalent::
-
-    power on
-    power:on
-    main.power on
-    main power on
-
-In other words, instead of the ``.`` and ``=`` separators, whitespace may
-be used, and the colon ``:`` is an alternative to ``=``. However, it's best
-to use the suggested syntax above.
+eiscp.command("PWR","00");
 
 ### Events
 
