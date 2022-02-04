@@ -23,10 +23,10 @@ function eiscp_packet(data) {
     // Add ISCP header if not already present
     if (data.charAt(0) !== '!') { data = '!1' + data; }
     // ISCP message
-    iscp_msg = new Buffer(data + '\x0D\x0a');
+    iscp_msg = Buffer.from(data + '\x0D\x0a');
 
     // eISCP header
-    header = new Buffer([
+    header = Buffer.from([
         73, 83, 67, 80, // magic
         0, 0, 0, 16,    // header size
         0, 0, 0, 0,     // data size
