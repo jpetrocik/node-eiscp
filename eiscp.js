@@ -50,15 +50,13 @@ function eiscp_packet_extract(packet) {
 self.discover = function () {
     /*
       discover([options, ] callback)
-      Sends broadcast and waits for response callback called when number of devices or timeout reached
-      option.devices    - stop listening after this amount of devices have answered (default: 1)
+      Sends broadcast and waits for response callback or timeout reached
       option.timeout    - time in seconds to wait for devices to respond (default: 10)
       option.address    - broadcast address to send magic packet to (default: 255.255.255.255)
       option.port       - receiver port should always be 60128 this is just available if you need it
     */
     var callback, timeout_timer,
         options = {},
-        result = [],
         client = dgram.createSocket('udp4'),
         argv = Array.prototype.slice.call(arguments),
         argc = argv.length;
@@ -72,14 +70,13 @@ self.discover = function () {
         return;
     }
 
-    options.devices = options.devices || 1;
     options.timeout = options.timeout || 10;
     options.address = options.address || '255.255.255.255';
     options.port = options.port || 60128;
 
     function close() {
+        clearTimeout(timeout_timer);
         client.close();
-        callback(false, result);
     }
 
     client
@@ -94,18 +91,14 @@ self.discover = function () {
             data;
         if (command === 'ECN') {
             data = message.slice(3).split('/');
-            result.push({
+            self.emit('debug', util.format("DEBUG (received_discovery) Received discovery packet from %s:%s", rinfo.address, rinfo.port));
+            callback(false, {
                 host:     rinfo.address,
                 port:     data[1],
                 model:    data[0],
                 mac:      data[3].slice(0, 12), // There's lots of null chars after MAC so we slice them off
                 areacode: data[2]
-            });
-            self.emit('debug', util.format("DEBUG (received_discovery) Received discovery packet from %s:%s (%j)", rinfo.address, rinfo.port, result));
-            if (result.length >= options.devices) {
-                clearTimeout(timeout_timer);
-                close();
-            }
+            })
         } else {
             self.emit('debug', util.format("DEBUG (received_data) Recevied data from %s:%s - %j", rinfo.address, rinfo.port, message));
         }
